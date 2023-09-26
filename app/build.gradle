@@ -144,6 +144,7 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.1"
     //noinspection GradleDependency
     implementation "androidx.room:room-ktx:2.5.1"
+    implementation "androidx.room:room-paging:2.5.2"
     //noinspection KaptUsageInsteadOfKsp,GradleDependency
     kapt "androidx.room:room-compiler:2.5.1"
     //noinspection GradleDependency
