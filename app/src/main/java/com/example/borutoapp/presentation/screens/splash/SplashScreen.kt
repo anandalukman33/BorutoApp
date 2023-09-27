@@ -23,13 +23,30 @@ import com.example.borutoapp.ui.theme.ShimmerDarkGray
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.rotate
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.borutoapp.navigation.Screen
 
 @Composable
-fun SplashScreen(navHostController: NavHostController) {
+fun SplashScreen(
+    navHostController: NavHostController,
+    splashViewModel: SplashViewModel = hiltViewModel()
+) {
+
+    val isOnBoardingCompleted by splashViewModel.onBoardingCompleted.collectAsState()
+
     val degrees = remember { Animatable(0f) }
     LaunchedEffect(key1 = true) {
         degrees.animateTo(targetValue = 360f, animationSpec = tween(durationMillis = 2000, delayMillis = 200))
+        navHostController.popBackStack()
+
+        if (isOnBoardingCompleted) {
+            navHostController.navigate(Screen.Home.route)
+        } else {
+            navHostController.navigate(Screen.Welcome.route)
+        }
     }
     Splash(degrees = degrees.value)
 }
