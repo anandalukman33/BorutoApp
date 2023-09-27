@@ -1,4 +1,4 @@
-package com.example.borutoapp.presentation.screens.home.componen.topbar
+package com.example.borutoapp.presentation.screens.home.component.topbar
 
 import android.content.res.Configuration
 import androidx.compose.material.Icon
