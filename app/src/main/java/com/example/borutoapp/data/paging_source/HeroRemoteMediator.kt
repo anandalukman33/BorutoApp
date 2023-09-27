@@ -39,7 +39,7 @@ class HeroRemoteMediator @Inject constructor(
                 }
 
             }
-            val response = borutoApi.getAllHeroes(page = 0)
+            val response = borutoApi.getAllHeroes(page = page)
             if (response.heroes.isNotEmpty()) {
                 borutoDatabase.withTransaction {
                     if (loadType == LoadType.REFRESH) {

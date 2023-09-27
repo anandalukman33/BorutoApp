@@ -20,4 +20,7 @@ object Constants {
     // Section API
     const val BASE_URL = "http://10.0.0.2:8080"
 
+    // Section Value Pagination
+    const val ITEM_PER_PAGING = 3
+
 }
