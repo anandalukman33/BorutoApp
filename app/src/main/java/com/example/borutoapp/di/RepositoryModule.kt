@@ -5,6 +5,7 @@ import com.example.borutoapp.data.repository.BorutoRepository
 import com.example.borutoapp.data.repository.DataStoreOperationsImpl
 import com.example.borutoapp.domain.repository.DataStoreOperations
 import com.example.borutoapp.domain.use_cases.BorutoUseCases
+import com.example.borutoapp.domain.use_cases.get_all_heroes.GetAllHeroesUseCases
 import com.example.borutoapp.domain.use_cases.read_on_boarding.ReadOnBoardingUseCases
 import com.example.borutoapp.domain.use_cases.save_on_boarding.SaveOnBoardingUseCases
 import dagger.Module
@@ -30,7 +31,8 @@ object RepositoryModule {
     fun provideUseCases(repository: BorutoRepository) : BorutoUseCases =
         BorutoUseCases(
             saveOnBoardingUseCases = SaveOnBoardingUseCases(repository),
-            readOnBoardingUseCases = ReadOnBoardingUseCases(repository)
+            readOnBoardingUseCases = ReadOnBoardingUseCases(repository),
+            getAllHeroesUseCases = GetAllHeroesUseCases(repository)
         )
 
 }

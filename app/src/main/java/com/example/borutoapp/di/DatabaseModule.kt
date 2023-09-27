@@ -2,7 +2,6 @@ package com.example.borutoapp.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.borutoapp.data.local.BorutoDatabase
 import com.example.borutoapp.util.Constants
 import dagger.Module
@@ -18,7 +17,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context) :  RoomDatabase {
+    fun provideDatabase(@ApplicationContext context: Context) :  BorutoDatabase {
         return Room.databaseBuilder(context, BorutoDatabase::class.java, Constants.BORUTO_DATABASE)
             .fallbackToDestructiveMigration() // for clear if value of database not matches
             .build()
