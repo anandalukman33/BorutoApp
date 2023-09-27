@@ -17,4 +17,7 @@ object Constants {
     const val PREFERENCES_NAME = "boruto_preferences"
     const val ON_BOARDING_COMPLETED_PREF_KEY = "on_boarding_completed"
 
+    // Section API
+    const val BASE_URL = "http://10.0.0.2:8080"
+
 }
