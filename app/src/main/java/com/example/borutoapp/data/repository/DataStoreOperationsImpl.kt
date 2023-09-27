@@ -1,4 +1,4 @@
-package com.example.borutoapp.data.pref
+package com.example.borutoapp.data.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -30,7 +30,7 @@ class DataStoreOperationsImpl(context: Context): DataStoreOperations {
         }
     }
 
-    override suspend fun readOnBoardingState(): Flow<Boolean> {
+    override fun readOnBoardingState(): Flow<Boolean> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
