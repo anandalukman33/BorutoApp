@@ -3,14 +3,17 @@ package com.example.borutoapp.presentation.screens.home.component.content
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -30,8 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.borutoapp.R
 import com.example.borutoapp.domain.model.Hero
@@ -41,7 +45,6 @@ import com.example.borutoapp.ui.theme.HERO_ITEM_HEIGHT
 import com.example.borutoapp.ui.theme.LARGE_PADDING
 import com.example.borutoapp.ui.theme.MEDIUM_PADDING
 import com.example.borutoapp.ui.theme.SMALL_PADDING
-import com.example.borutoapp.ui.theme.Shapes
 import com.example.borutoapp.ui.theme.topAppBarContentColor
 import com.example.borutoapp.util.Constants
 
@@ -49,9 +52,22 @@ import com.example.borutoapp.util.Constants
 fun ListContent(
     heroes: LazyPagingItems<Hero>,
     navHostController: NavHostController,
-
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(all = SMALL_PADDING),
+        verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
     ) {
-
+        items(
+            count = heroes.itemCount,
+            key = heroes.itemKey(key = { hero -> hero.id }),
+            contentType = heroes.itemContentType()
+        ) { index ->
+            val item = heroes[index]
+            item?.let {
+                HeroItem(hero = item, navHostController = navHostController)
+            }
+        }
+    }
 }
 
 @Composable
@@ -76,7 +92,7 @@ fun HeroItem(
             },
         contentAlignment = Alignment.BottomStart
     ) {
-        Surface(shape = Shapes.large) {
+        Surface(shape = RoundedCornerShape(size = LARGE_PADDING)) {
             Image(
                 modifier = Modifier.fillMaxSize(),
                 painter = painter,
@@ -137,8 +153,8 @@ fun HeroItem(
     }
 }
 
-@Preview()
-@Composable()
+@Preview
+@Composable
 fun HeroItemLightPreview() {
     HeroItem(
         hero =
@@ -159,7 +175,7 @@ fun HeroItemLightPreview() {
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable()
+@Composable
 fun HeroItemDarkPreview() {
     HeroItem(
         hero =
