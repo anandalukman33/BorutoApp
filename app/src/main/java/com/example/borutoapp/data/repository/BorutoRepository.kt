@@ -20,4 +20,6 @@ class BorutoRepository @Inject constructor(
 
     fun getAllHeroes(): Flow<PagingData<Hero>> = remoteDataSource.getAllHeroesData()
 
+    fun searchHeroes(query: String): Flow<PagingData<Hero>> = remoteDataSource.searchHeroesData(query = query)
+
 }

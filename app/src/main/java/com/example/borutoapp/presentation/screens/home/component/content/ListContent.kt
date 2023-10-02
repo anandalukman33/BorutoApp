@@ -129,10 +129,16 @@ fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, LoadState.Err
                 ShimmerEffect()
                 mapOf("isRefresh" to error)
             }
+            heroes.itemCount < 1 -> {
+                EmptyScreen()
+                mapOf("emptyHero" to null)
+            }
             error != null -> {
                 mapOf("loadStateIsNotNull" to error)
             }
-            else -> mapOf("loadStateNull" to null)
+            else -> {
+                mapOf("loadStateNull" to null)
+            }
         }
     }
 }
