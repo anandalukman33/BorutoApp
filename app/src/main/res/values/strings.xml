@@ -9,4 +9,7 @@
     <string name="alpha_animated_configuration">Alpha Animated Configuration</string>
     <string name="network_error_icon">Network Error Icon</string>
     <string name="animated_alpha_object">Animated Alpha Object</string>
+    <string name="search_here">Search here...</string>
+    <string name="icon_default_search">Icon Default Search</string>
+    <string name="icon_default_close">Icon Default Close</string>
 </resources>
