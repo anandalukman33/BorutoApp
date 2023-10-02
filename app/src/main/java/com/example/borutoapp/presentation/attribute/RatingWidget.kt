@@ -200,8 +200,6 @@ fun calculateStars(rating: Double): Map<String, Int> {
                 emptyStars = 5
                 filledStars = 0
                 halfStars = 0
-            } else {
-                Timber.tag("RatingWidget").d("Invalid Rating Number")
             }
         }
     }

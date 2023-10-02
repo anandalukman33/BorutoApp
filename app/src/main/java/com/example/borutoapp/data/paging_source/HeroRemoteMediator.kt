@@ -9,6 +9,8 @@ import com.example.borutoapp.data.local.BorutoDatabase
 import com.example.borutoapp.data.remote.BorutoApi
 import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.domain.model.HeroRemoteKeys
+import com.example.borutoapp.util.Utility
+import timber.log.Timber
 import javax.inject.Inject
 
 @ExperimentalPagingApi
@@ -19,6 +21,24 @@ class HeroRemoteMediator @Inject constructor(
 
     private val heroDao = borutoDatabase.heroDao()
     private val heroRemoteKeysDao = borutoDatabase.heroRemoteKeysDao()
+
+    override suspend fun initialize(): InitializeAction {
+        val currentTime = System.currentTimeMillis()
+        val lastUpdated = heroRemoteKeysDao.getRemoteKeys(heroId = 1)?.lastUpdated ?: 0L
+        val cacheTimeout = 1440
+
+        Timber.d("Current Time : ${Utility.parseMillis(currentTime)}")
+        Timber.d("Last Updated Time : ${Utility.parseMillis(lastUpdated)}")
+
+        val diffMinutes = (currentTime - lastUpdated) / 1000 / 60
+        return if (diffMinutes.toInt() <= cacheTimeout) {
+            Timber.d("UP TO DATE!")
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            Timber.d("REFRESH!")
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Hero>): MediatorResult {
         return try {
@@ -48,11 +68,13 @@ class HeroRemoteMediator @Inject constructor(
                     }
                     val prevPage = response.prevPage
                     val nextPage = response.nextPage
+                    val lastUpdated = response.lastUpdated
                     val keys = response.heroes.map {hero ->
                         HeroRemoteKeys(
                             id = hero.id,
                             prevPage = prevPage,
                             nextPage = nextPage,
+                            lastUpdated = lastUpdated
                         )
                     }
                     heroRemoteKeysDao.addAllRemoteKeys(heroRemoteKeys = keys)
