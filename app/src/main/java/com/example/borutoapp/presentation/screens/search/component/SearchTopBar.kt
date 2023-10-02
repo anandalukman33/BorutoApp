@@ -147,7 +147,7 @@ fun SearchWidget(
                             tint = MaterialTheme.colors.topAppBarContentColor
                         )
                     }
-                } else if (text.isEmpty()){
+                } else if (text.isEmpty()) {
                     LaunchedEffect(key1 = true) {
                         startAnimation = false
                     }
