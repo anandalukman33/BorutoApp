@@ -17,9 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
@@ -41,31 +45,93 @@ import com.example.borutoapp.R
 import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.navigation.Screen
 import com.example.borutoapp.presentation.attribute.RatingWidget
+import com.example.borutoapp.presentation.attribute.ShimmerEffect
 import com.example.borutoapp.ui.theme.HERO_ITEM_HEIGHT
 import com.example.borutoapp.ui.theme.LARGE_PADDING
 import com.example.borutoapp.ui.theme.MEDIUM_PADDING
 import com.example.borutoapp.ui.theme.SMALL_PADDING
 import com.example.borutoapp.ui.theme.topAppBarContentColor
 import com.example.borutoapp.util.Constants
+import kotlinx.coroutines.launch
 
 @Composable
 fun ListContent(
     heroes: LazyPagingItems<Hero>,
     navHostController: NavHostController,
+    scaffoldState: ScaffoldState
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(all = SMALL_PADDING),
-        verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
-    ) {
-        items(
-            count = heroes.itemCount,
-            key = heroes.itemKey(key = { hero -> hero.id }),
-            contentType = heroes.itemContentType()
-        ) { index ->
-            val item = heroes[index]
-            item?.let {
-                HeroItem(hero = item, navHostController = navHostController)
+    val result = handlePagingResult(heroes = heroes)
+    val coroutineScope = rememberCoroutineScope()
+
+    val showSnackBar: (
+        message: String?,
+        actionLabel: String,
+        actionPerformed: () -> Unit,
+        dismissed: () -> Unit
+    ) -> Unit = { message, actionLabel, actionPerformed, dismissed ->
+        coroutineScope.launch {
+            val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
+                message = message.toString(),
+                actionLabel = actionLabel
+            )
+            when (snackBarResult) {
+                SnackbarResult.ActionPerformed -> actionPerformed.invoke()
+                SnackbarResult.Dismissed -> dismissed.invoke()
             }
+        }
+    }
+
+    when {
+
+        result.containsKey("loadStateNull") -> {
+            LazyColumn(
+                contentPadding = PaddingValues(all = SMALL_PADDING),
+                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+            ) {
+                items(
+                    count = heroes.itemCount,
+                    key = heroes.itemKey(key = { hero -> hero.id }),
+                    contentType = heroes.itemContentType()
+                ) { index ->
+                    val item = heroes[index]
+                    item?.let {
+                        HeroItem(hero = item, navHostController = navHostController)
+                    }
+                }
+            }
+        }
+
+        result.containsKey("loadStateIsNotNull") -> {
+            showSnackBar.invoke(
+                result["loadStateIsNotNull"],
+                "refresh",
+                { heroes.refresh() },
+                {}
+            )
+        }
+    }
+}
+
+@Composable
+fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, String?> {
+
+    heroes.apply {
+        val error = when {
+            loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+            loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+            loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+            else -> null
+        }
+
+        return when {
+            loadState.refresh is LoadState.Loading -> {
+                ShimmerEffect()
+                mapOf("isRefresh" to error?.error?.message.toString())
+            }
+            error != null -> {
+                mapOf("loadStateIsNotNull" to error.error.message.toString())
+            }
+            else -> mapOf("loadStateNull" to null)
         }
     }
 }

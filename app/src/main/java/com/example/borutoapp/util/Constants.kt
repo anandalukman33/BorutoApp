@@ -18,7 +18,7 @@ object Constants {
     const val ON_BOARDING_COMPLETED_PREF_KEY = "on_boarding_completed"
 
     // Section API
-    const val BASE_URL = "https://d3ec-223-255-229-67.ngrok-free.app" //"http://10.0.0.2:8080"
+    const val BASE_URL = "http://10.70.146.77:8080" //""
 
     // Section Value Pagination
     const val ITEM_PER_PAGING = 3
