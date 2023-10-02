@@ -102,18 +102,19 @@ fun ListContent(
         }
 
         result.containsKey("loadStateIsNotNull") -> {
+            EmptyScreen(error = result["loadStateIsNotNull"])
             showSnackBar.invoke(
-                result["loadStateIsNotNull"],
+                result["loadStateIsNotNull"]?.error?.localizedMessage ?: "",
                 "refresh",
                 { heroes.refresh() },
-                {}
+                {  } // Dismiss SnackBar
             )
         }
     }
 }
 
 @Composable
-fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, String?> {
+fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, LoadState.Error?> {
 
     heroes.apply {
         val error = when {
@@ -126,10 +127,10 @@ fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, String?> {
         return when {
             loadState.refresh is LoadState.Loading -> {
                 ShimmerEffect()
-                mapOf("isRefresh" to error?.error?.message.toString())
+                mapOf("isRefresh" to error)
             }
             error != null -> {
-                mapOf("loadStateIsNotNull" to error.error.message.toString())
+                mapOf("loadStateIsNotNull" to error)
             }
             else -> mapOf("loadStateNull" to null)
         }

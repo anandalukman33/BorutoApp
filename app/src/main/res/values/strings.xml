@@ -7,4 +7,6 @@
     <string name="hero_image">hero image</string>
     <string name="transitionstate">transitionState</string>
     <string name="alpha_animated_configuration">Alpha Animated Configuration</string>
+    <string name="network_error_icon">Network Error Icon</string>
+    <string name="animated_alpha_object">Animated Alpha Object</string>
 </resources>
