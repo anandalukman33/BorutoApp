@@ -8,5 +8,6 @@
     <string name="animated_alpha_object">Animated Alpha Object</string>
     <string name="icon_default_search">Icon Default Search</string>
     <string name="icon_default_close">Icon Default Close</string>
+    <string name="icon_default_back_menu">Icon Default Back Menu</string>
 
 </resources>

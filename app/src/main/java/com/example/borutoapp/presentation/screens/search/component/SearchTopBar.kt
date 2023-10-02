@@ -1,6 +1,8 @@
 package com.example.borutoapp.presentation.screens.search.component
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,9 +18,15 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -38,6 +46,8 @@ fun SearchTopBar(
     onSearchClicked: (String) -> Unit,
     onCloseClicked: () -> Unit
 ) {
+
+
     SearchWidget(
         text = text,
         onTextChange = onTextChange,
@@ -53,6 +63,18 @@ fun SearchWidget(
     onSearchClicked: (String) -> Unit,
     onCloseClicked: () -> Unit
 ) {
+
+    var startAnimation by remember { mutableStateOf(false) }
+    val alphaAnim by animateFloatAsState(
+        targetValue = if (startAnimation) ContentAlpha.high else 0f,
+        animationSpec = tween(
+            durationMillis = 1000,
+
+            ), label = stringResource(R.string.animated_alpha_object)
+    )
+
+
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,33 +99,58 @@ fun SearchWidget(
             ),
             singleLine = true,
             leadingIcon = {
-                IconButton(
-                    modifier = Modifier
-                        .alpha(ContentAlpha.medium),
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(R.string.icon_default_search),
-                        tint = MaterialTheme.colors.topAppBarContentColor
-                    )
+                if (text.isNotEmpty()) {
+                    IconButton(
+                        modifier = Modifier
+                            .alpha(ContentAlpha.medium),
+                        onClick = {}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.icon_default_search),
+                            tint = MaterialTheme.colors.topAppBarContentColor
+                        )
+                    }
+                } else {
+                    IconButton(
+                        modifier = Modifier
+                            .alpha(ContentAlpha.medium),
+                        onClick = { onCloseClicked() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.icon_default_back_menu),
+                            tint = MaterialTheme.colors.topAppBarContentColor
+                        )
+                    }
                 }
+
             },
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (text.isNotEmpty()) {
-                            onTextChange("")
-                        } else {
-                            onCloseClicked()
-                        }
+                if (text.isNotEmpty()) {
+
+                    LaunchedEffect(key1 = true) {
+                        startAnimation = true
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.icon_default_close),
-                        tint = MaterialTheme.colors.topAppBarContentColor
-                    )
+
+                    IconButton(
+                        modifier = Modifier.alpha(alphaAnim),
+                        onClick = {
+                            if (text.isNotEmpty()) {
+                                onTextChange("")
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.icon_default_close),
+                            tint = MaterialTheme.colors.topAppBarContentColor
+                        )
+                    }
+                } else if (text.isEmpty()){
+                    LaunchedEffect(key1 = true) {
+                        startAnimation = false
+                    }
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
