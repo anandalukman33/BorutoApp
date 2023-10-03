@@ -1,9 +1,13 @@
 package com.example.borutoapp.presentation.screens.details
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,8 +16,11 @@ import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -21,12 +28,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.borutoapp.R
 import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.presentation.attribute.InfoBox
@@ -35,8 +48,11 @@ import com.example.borutoapp.ui.theme.INFO_ICON_SIZE
 import com.example.borutoapp.ui.theme.LARGE_PADDING
 import com.example.borutoapp.ui.theme.MEDIUM_PADDING
 import com.example.borutoapp.ui.theme.MIN_SHEET_HEIGHT
+import com.example.borutoapp.ui.theme.SMALL_PADDING
 import com.example.borutoapp.ui.theme.titleColor
+import com.example.borutoapp.util.Constants
 
+@ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
 fun DetailsContent(
@@ -54,7 +70,14 @@ fun DetailsContent(
         scaffoldState = scaffoldState,
         sheetPeekHeight = MIN_SHEET_HEIGHT,
         sheetContent = { selectedHero?.let { BottomSheetContent(selectedHero = it) } },
-        content = {}
+        content = {
+            BackgroundContent(
+                heroImage = selectedHero?.image ?: "",
+                onCloseClicked = {
+                    navHostController.popBackStack()
+                }
+            )
+        }
     )
 
 }
@@ -66,135 +89,184 @@ fun BottomSheetContent(
     sheetBackgroundColor: Color = MaterialTheme.colors.surface,
     contentColor: Color = MaterialTheme.colors.titleColor
 ) {
-        Column(
+    Column(
+        modifier = Modifier
+            .background(sheetBackgroundColor)
+            .padding(all = LARGE_PADDING)
+    ) {
+        Row(
             modifier = Modifier
-                .background(sheetBackgroundColor)
-                .padding(all = LARGE_PADDING)
+                .fillMaxWidth()
+                .padding(bottom = LARGE_PADDING),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = LARGE_PADDING),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                /**
-                 * Section Name Of Hero
-                 */
-                Icon(
-                    modifier = Modifier
-                        .size(INFO_ICON_SIZE)
-                        .weight(2f),
-                    painter = painterResource(id = R.drawable.ic_logo),
-                    contentDescription = stringResource(R.string.logo_icon_bottom_sheet_content),
-                    tint = contentColor
-                )
-                Text(
-                    modifier = Modifier
-                        .weight(8f),
-                    text = selectedHero.name,
-                    color = contentColor,
-                    fontSize = MaterialTheme.typography.h4.fontSize,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = MEDIUM_PADDING),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                /**
-                 * Section Power Hero
-                 */
-                InfoBox(
-                    icon = painterResource(id = R.drawable.ic_bolt),
-                    iconColor = infoBoxIconColor,
-                    bigText = "${selectedHero.power}",
-                    smallText = stringResource(R.string.power),
-                    textColor = contentColor
-                )
-
-                /**
-                 * Section Month Birth Hero
-                 */
-                InfoBox(
-                    icon = painterResource(id = R.drawable.ic_calendar),
-                    iconColor = infoBoxIconColor,
-                    bigText = selectedHero.month,
-                    smallText = stringResource(R.string.month),
-                    textColor = contentColor
-                )
-
-                /**
-                 * Section Day Birth Hero
-                 */
-                InfoBox(
-                    icon = painterResource(id = R.drawable.ic_cake),
-                    iconColor = infoBoxIconColor,
-                    bigText = selectedHero.day,
-                    smallText = stringResource(R.string.birthday),
-                    textColor = contentColor
-                )
-            }
 
             /**
-             * Section Description About Hero
+             * Section Name Of Hero
              */
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.about),
-                color = contentColor,
-                fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                fontWeight = FontWeight.Bold
+            Icon(
+                modifier = Modifier
+                    .size(INFO_ICON_SIZE)
+                    .weight(2f),
+                painter = painterResource(id = R.drawable.ic_logo),
+                contentDescription = stringResource(R.string.logo_icon_bottom_sheet_content),
+                tint = contentColor
             )
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(ContentAlpha.medium)
-                    .padding(bottom = MEDIUM_PADDING),
-                text = selectedHero.about,
+                    .weight(8f),
+                text = selectedHero.name,
                 color = contentColor,
-                fontSize = MaterialTheme.typography.body1.fontSize,
-                maxLines = 7,
-                textAlign = TextAlign.Justify
+                fontSize = MaterialTheme.typography.h4.fontSize,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = MEDIUM_PADDING),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            /**
+             * Section Power Hero
+             */
+            InfoBox(
+                icon = painterResource(id = R.drawable.ic_bolt),
+                iconColor = infoBoxIconColor,
+                bigText = "${selectedHero.power}",
+                smallText = stringResource(R.string.power),
+                textColor = contentColor
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            /**
+             * Section Month Birth Hero
+             */
+            InfoBox(
+                icon = painterResource(id = R.drawable.ic_calendar),
+                iconColor = infoBoxIconColor,
+                bigText = selectedHero.month,
+                smallText = stringResource(R.string.month),
+                textColor = contentColor
+            )
+
+            /**
+             * Section Day Birth Hero
+             */
+            InfoBox(
+                icon = painterResource(id = R.drawable.ic_cake),
+                iconColor = infoBoxIconColor,
+                bigText = selectedHero.day,
+                smallText = stringResource(R.string.birthday),
+                textColor = contentColor
+            )
+        }
+
+        /**
+         * Section Description About Hero
+         */
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.about),
+            color = contentColor,
+            fontSize = MaterialTheme.typography.subtitle1.fontSize,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(ContentAlpha.medium)
+                .padding(bottom = MEDIUM_PADDING),
+            text = selectedHero.about,
+            color = contentColor,
+            fontSize = MaterialTheme.typography.body1.fontSize,
+            maxLines = 7,
+            textAlign = TextAlign.Justify
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            /**
+             * Section Family of Hero
+             */
+            OrderedList(
+                title = stringResource(R.string.family),
+                items = selectedHero.family,
+                textColor = contentColor
+            )
+
+            /**
+             * Section Abilities of Hero
+             */
+            OrderedList(
+                title = stringResource(R.string.abilities),
+                items = selectedHero.abilities,
+                textColor = contentColor
+            )
+
+            /**
+             * Section Nature Types of Hero
+             */
+            OrderedList(
+                title = stringResource(R.string.nature_types),
+                items = selectedHero.natureTypes,
+                textColor = contentColor
+            )
+        }
+    }
+
+}
+
+@Composable
+fun BackgroundContent(
+    heroImage: String,
+    imageFraction: Float = 1f,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    onCloseClicked: () -> Unit
+) {
+
+    val imageUrl = "${Constants.BASE_URL}$heroImage"
+    val painter = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(data = imageUrl)
+            .apply(block = {
+                error(R.drawable.ic_placeholder)
+            }).build()
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+    ) {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(imageFraction)
+                .align(Alignment.TopStart),
+            painter = painter,
+            contentDescription = stringResource(id = R.string.hero_image),
+            contentScale = ContentScale.Crop
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(
+                modifier = Modifier.padding(all = SMALL_PADDING),
+                onClick = { onCloseClicked() }
             ) {
-
-                /**
-                 * Section Family of Hero
-                 */
-                OrderedList(
-                    title = stringResource(R.string.family),
-                    items = selectedHero.family,
-                    textColor = contentColor
-                )
-
-                /**
-                 * Section Abilities of Hero
-                 */
-                OrderedList(
-                    title = stringResource(R.string.abilities),
-                    items = selectedHero.abilities,
-                    textColor = contentColor
-                )
-
-                /**
-                 * Section Nature Types of Hero
-                 */
-                OrderedList(
-                    title = stringResource(R.string.nature_types),
-                    items = selectedHero.natureTypes,
-                    textColor = contentColor
+                Icon(
+                    modifier = Modifier.size(INFO_ICON_SIZE),
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(id = R.string.icon_default_close),
+                    tint = Color.White
                 )
             }
         }
-
+    }
 }
 
 @Preview(showBackground = true)
