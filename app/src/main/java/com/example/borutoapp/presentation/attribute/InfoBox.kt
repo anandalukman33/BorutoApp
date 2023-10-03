@@ -22,8 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.borutoapp.R
 import com.example.borutoapp.ui.theme.INFO_ICON_SIZE
 import com.example.borutoapp.ui.theme.SMALL_PADDING
-import com.example.borutoapp.ui.theme.descriptionColor
-import com.example.borutoapp.ui.theme.statusBarColor
 import com.example.borutoapp.ui.theme.titleColor
 
 @Composable
