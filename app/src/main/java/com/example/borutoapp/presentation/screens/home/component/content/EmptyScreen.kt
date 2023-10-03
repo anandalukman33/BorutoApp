@@ -28,7 +28,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import com.example.borutoapp.R
+import com.example.borutoapp.domain.model.Hero
 import com.example.borutoapp.ui.theme.DarkGray
 import com.example.borutoapp.ui.theme.LightGray
 import com.example.borutoapp.ui.theme.NETWORK_ERROR_ICON_HEIGHT
@@ -37,7 +39,10 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 @Composable
-fun EmptyScreen(error: LoadState.Error? = null) {
+fun EmptyScreen(
+    error: LoadState.Error? = null,
+    heroes: LazyPagingItems<Hero>? = null
+) {
     var message by remember {
         mutableStateOf("Find your favorite Hero!")
     }
@@ -55,20 +60,34 @@ fun EmptyScreen(error: LoadState.Error? = null) {
         targetValue = if (startAnimation) ContentAlpha.high else 0f,
         animationSpec = tween(
             durationMillis = 1000,
-            
-        ), label = stringResource(R.string.animated_alpha_object)
+
+            ), label = stringResource(R.string.animated_alpha_object)
     )
-    
+
     LaunchedEffect(key1 = true) {
         startAnimation = true
     }
 
-    EmptyContent(alphaAnim = alphaAnim, icon = icon, message = message)
+    EmptyContent(
+        alphaAnim = alphaAnim,
+        icon = icon,
+        message = message,
+        heroes = heroes,
+        error = error
+    )
 }
 
 @Composable
-fun EmptyContent(alphaAnim: Float, icon: Int, message: String) {
-    Column(modifier = Modifier.fillMaxSize(),
+fun EmptyContent(
+    alphaAnim: Float,
+    icon: Int,
+    message: String,
+    heroes: LazyPagingItems<Hero>? = null,
+    error: LoadState.Error? = null,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -112,11 +131,19 @@ fun parseErrorMessage(errState: LoadState.Error?): String {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun EmptyScreenDarkPreview() {
-    EmptyContent(alphaAnim = ContentAlpha.high, icon = R.drawable.ic_network_error, message = "Internet Unavailable")
+    EmptyContent(
+        alphaAnim = ContentAlpha.high,
+        icon = R.drawable.ic_network_error,
+        message = "Internet Unavailable"
+    )
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, showBackground = true)
 @Composable
 fun EmptyScreenLightPreview() {
-    EmptyContent(alphaAnim = ContentAlpha.high, icon = R.drawable.ic_network_error, message = "Server Unavailable")
+    EmptyContent(
+        alphaAnim = ContentAlpha.high,
+        icon = R.drawable.ic_network_error,
+        message = "Server Unavailable"
+    )
 }

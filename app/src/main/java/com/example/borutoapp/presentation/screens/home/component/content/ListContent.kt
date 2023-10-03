@@ -22,7 +22,12 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +57,8 @@ import com.example.borutoapp.ui.theme.MEDIUM_PADDING
 import com.example.borutoapp.ui.theme.SMALL_PADDING
 import com.example.borutoapp.ui.theme.topAppBarContentColor
 import com.example.borutoapp.util.Constants
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -81,34 +88,50 @@ fun ListContent(
         }
     }
 
-    when {
+    var isRefreshing by remember { mutableStateOf(false) }
 
-        result.containsKey("loadStateNull") -> {
-            LazyColumn(
-                contentPadding = PaddingValues(all = SMALL_PADDING),
-                verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
-            ) {
-                items(
-                    count = heroes.itemCount,
-                    key = heroes.itemKey(key = { hero -> hero.id }),
-                    contentType = heroes.itemContentType()
-                ) { index ->
-                    val item = heroes[index]
-                    item?.let {
-                        HeroItem(hero = item, navHostController = navHostController)
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
+    }
+
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+        onRefresh = {
+            isRefreshing = true
+            heroes.refresh()
+        }
+    ) {
+        when {
+
+            result.containsKey("loadStateNull") -> {
+                LazyColumn(
+                    contentPadding = PaddingValues(all = SMALL_PADDING),
+                    verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+                ) {
+                    items(
+                        count = heroes.itemCount,
+                        key = heroes.itemKey(key = { hero -> hero.id }),
+                        contentType = heroes.itemContentType()
+                    ) { index ->
+                        val item = heroes[index]
+                        item?.let {
+                            HeroItem(hero = item, navHostController = navHostController)
+                        }
                     }
                 }
             }
-        }
 
-        result.containsKey("loadStateIsNotNull") -> {
-            EmptyScreen(error = result["loadStateIsNotNull"])
-            showSnackBar.invoke(
-                result["loadStateIsNotNull"]?.error?.localizedMessage ?: "",
-                "refresh",
-                { heroes.refresh() },
-                {  } // Dismiss SnackBar
-            )
+            result.containsKey("loadStateIsNotNull") -> {
+                EmptyScreen(error = result["loadStateIsNotNull"], heroes = heroes)
+                showSnackBar.invoke(
+                    result["loadStateIsNotNull"]?.error?.localizedMessage ?: "",
+                    "refresh",
+                    { heroes.refresh() },
+                    {  } // Dismiss SnackBar
+                )
+            }
         }
     }
 }
@@ -130,8 +153,8 @@ fun handlePagingResult(heroes: LazyPagingItems<Hero>): Map<String, LoadState.Err
                 mapOf("isRefresh" to error)
             }
             heroes.itemCount < 1 -> {
-                EmptyScreen()
-                mapOf("emptyHero" to null)
+                EmptyScreen(heroes = heroes)
+                mapOf("emptyHero" to error)
             }
             error != null -> {
                 mapOf("loadStateIsNotNull" to error)
