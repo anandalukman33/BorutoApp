@@ -26,7 +26,6 @@ import com.example.borutoapp.R
 import com.example.borutoapp.ui.theme.EXTRA_SMALL_PADDING
 import com.example.borutoapp.ui.theme.LightGray
 import com.example.borutoapp.ui.theme.StarColor
-import timber.log.Timber
 
 @Composable
 fun RatingWidget(
