@@ -60,8 +60,7 @@ fun EmptyScreen(
         targetValue = if (startAnimation) ContentAlpha.high else 0f,
         animationSpec = tween(
             durationMillis = 1000,
-
-            ), label = stringResource(R.string.animated_alpha_object)
+            )
     )
 
     LaunchedEffect(key1 = true) {

@@ -10,5 +10,13 @@
     <string name="icon_default_close">Icon Default Close</string>
     <string name="icon_default_back_menu">Icon Default Back Menu</string>
     <string name="info_icon">info icon</string>
+    <string name="logo_icon_bottom_sheet_content">Logo Icon Bottom Sheet Content</string>
+    <string name="power">Power</string>
+    <string name="month">Month</string>
+    <string name="birthday">Birthday</string>
+    <string name="about">About</string>
+    <string name="family">Family</string>
+    <string name="abilities">Abilities</string>
+    <string name="nature_types">Nature Types</string>
 
 </resources>

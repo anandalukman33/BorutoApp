@@ -70,7 +70,7 @@ fun SearchWidget(
         animationSpec = tween(
             durationMillis = 1000,
 
-            ), label = stringResource(R.string.animated_alpha_object)
+            )
     )
 
 
