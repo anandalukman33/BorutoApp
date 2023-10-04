@@ -2,6 +2,7 @@ package com.example.borutoapp.data.remote
 
 import com.example.borutoapp.domain.model.ApiResponse
 import com.example.borutoapp.domain.model.Hero
+import java.io.IOException
 
 class FakeBorutoApiAndroidTest: BorutoApi {
 
@@ -15,7 +16,7 @@ class FakeBorutoApiAndroidTest: BorutoApi {
             5 to page5
         )
     }
-    private val page1 = listOf(
+    private var page1 = listOf(
         Hero(
             id = 1,
             name = "Sasuke",
@@ -395,8 +396,20 @@ class FakeBorutoApiAndroidTest: BorutoApi {
         )
     )
 
+    fun clearData() {
+        page1 = emptyList()
+    }
+
+    var exception = false
+
+    fun addException() {
+        exception = true
+    }
 
     override suspend fun getAllHeroes(page: Int): ApiResponse {
+        if (exception) {
+            throw IOException()
+        }
         require(page in 1..5)
         return ApiResponse(
             success = true,
@@ -415,9 +428,12 @@ class FakeBorutoApiAndroidTest: BorutoApi {
 
     @Suppress("KotlinConstantConditions")
     private fun calculatePage(page: Int) : Map<String, Int?> {
+        if (page1.isEmpty()) {
+            return mapOf("prevPage" to null, "nextPage" to null)
+        }
+
         var prevPage: Int? = page
         var nextPage: Int? = page
-
 
         when (page) {
             in 1..4 -> {
