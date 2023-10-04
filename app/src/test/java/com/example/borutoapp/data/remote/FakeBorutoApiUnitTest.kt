@@ -4,7 +4,7 @@ import com.example.borutoapp.domain.model.ApiResponse
 import com.example.borutoapp.domain.model.Hero
 
 @Suppress("unused")
-class FakeBorutoApi: BorutoApi {
+class FakeBorutoApiUnitTest: BorutoApi {
 
     private val heroes = listOf(
         Hero(
