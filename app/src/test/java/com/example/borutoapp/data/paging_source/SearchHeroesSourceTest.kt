@@ -2,7 +2,7 @@ package com.example.borutoapp.data.paging_source
 
 import androidx.paging.PagingSource
 import com.example.borutoapp.data.remote.BorutoApi
-import com.example.borutoapp.data.remote.FakeBorutoApi
+import com.example.borutoapp.data.remote.FakeBorutoApiUnitTest
 import com.example.borutoapp.domain.model.Hero
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -19,7 +19,7 @@ class SearchHeroesSourceTest {
 
     @Before
     fun setup() {
-        borutoApi = FakeBorutoApi()
+        borutoApi = FakeBorutoApiUnitTest()
         heroes = listOf(
             Hero(
                 id = 1,
