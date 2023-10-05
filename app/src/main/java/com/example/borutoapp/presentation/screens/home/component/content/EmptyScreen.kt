@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,7 +48,7 @@ fun EmptyScreen(
         mutableStateOf("Find your favorite Hero!")
     }
     var icon by remember {
-        mutableStateOf(R.drawable.ic_search_document)
+        mutableIntStateOf(R.drawable.ic_search_document)
     }
 
     if (error != null) {
@@ -60,7 +61,7 @@ fun EmptyScreen(
         targetValue = if (startAnimation) ContentAlpha.high else 0f,
         animationSpec = tween(
             durationMillis = 1000,
-            )
+            ), label = stringResource(R.string.faded_animation_config)
     )
 
     LaunchedEffect(key1 = true) {
@@ -71,8 +72,6 @@ fun EmptyScreen(
         alphaAnim = alphaAnim,
         icon = icon,
         message = message,
-        heroes = heroes,
-        error = error
     )
 }
 
@@ -80,9 +79,7 @@ fun EmptyScreen(
 fun EmptyContent(
     alphaAnim: Float,
     icon: Int,
-    message: String,
-    heroes: LazyPagingItems<Hero>? = null,
-    error: LoadState.Error? = null,
+    message: String
 ) {
     Column(
         modifier = Modifier
