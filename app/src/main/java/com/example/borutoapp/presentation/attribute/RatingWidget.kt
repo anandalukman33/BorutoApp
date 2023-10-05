@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,7 @@ import com.example.borutoapp.R
 import com.example.borutoapp.ui.theme.EXTRA_SMALL_PADDING
 import com.example.borutoapp.ui.theme.LightGray
 import com.example.borutoapp.ui.theme.StarColor
+import com.example.borutoapp.util.TestConstants
 
 @Composable
 fun RatingWidget(
@@ -91,7 +94,9 @@ fun RatingWidget(
 
 @Composable
 fun FilledStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float) {
-    Canvas(modifier = Modifier.size(24.dp)) {
+    Canvas(modifier = Modifier
+        .semantics { contentDescription = TestConstants.FILLED_STAR }
+        .size(24.dp)) {
         val canvasSize = size
 
         scale(scale = scaleFactor) {
@@ -112,7 +117,9 @@ fun FilledStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float) {
 
 @Composable
 fun HalfFilledStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float, rating: Double) {
-    Canvas(modifier = Modifier.size(24.dp)) {
+    Canvas(modifier = Modifier
+        .semantics { contentDescription = TestConstants.HALF_STAR }
+        .size(24.dp)) {
         val canvasSize = size
 
         scale(scale = scaleFactor) {
@@ -124,17 +131,46 @@ fun HalfFilledStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float, rat
             val (_, lastNumber) = rating.toString()
                 .split(".")
                 .map { it.toInt() }
-            val filledCustom: Float = when(lastNumber) {
-                1 -> { 2.1f }
-                2 -> { 2.0f }
-                3 -> { 1.9f }
-                4 -> { 1.8f }
-                5 -> { 1.7f }
-                6 -> { 1.6f }
-                7 -> { 1.5f }
-                8 -> { 1.4f }
-                9 -> { 1.3f }
-                else -> { 1.7f }
+            val filledCustom: Float = when (lastNumber) {
+                1 -> {
+                    2.1f
+                }
+
+                2 -> {
+                    2.0f
+                }
+
+                3 -> {
+                    1.9f
+                }
+
+                4 -> {
+                    1.8f
+                }
+
+                5 -> {
+                    1.7f
+                }
+
+                6 -> {
+                    1.6f
+                }
+
+                7 -> {
+                    1.5f
+                }
+
+                8 -> {
+                    1.4f
+                }
+
+                9 -> {
+                    1.3f
+                }
+
+                else -> {
+                    1.7f
+                }
             }
 
             translate(left = left, top = top) {
@@ -158,7 +194,9 @@ fun HalfFilledStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float, rat
 
 @Composable
 fun EmptyStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float) {
-    Canvas(modifier = Modifier.size(24.dp)) {
+    Canvas(modifier = Modifier
+        .semantics { contentDescription = TestConstants.EMPTY_STAR }
+        .size(24.dp)) {
         val canvasSize = size
 
         scale(scale = scaleFactor) {
@@ -196,10 +234,14 @@ fun calculateStars(rating: Double): Map<String, Int> {
             }
 
             if (firstNumber == 5 && lastNumber > 0) {
-                emptyStars = 5
-                filledStars = 0
+                emptyStars = 0
+                filledStars = 5
                 halfStars = 0
             }
+        } else if (firstNumber in 6..9 && lastNumber in 0..9) {
+            emptyStars = 0
+            filledStars = 5
+            halfStars = 0
         }
     }
     emptyStars = maxStars - (filledStars + halfStars)
@@ -227,7 +269,12 @@ fun HalfFilledStarPreview() {
     val starPathBounds = remember {
         starPath.getBounds()
     }
-    HalfFilledStar(starPath = starPath, starPathBounds = starPathBounds, scaleFactor = 3f, rating = 4.1)
+    HalfFilledStar(
+        starPath = starPath,
+        starPathBounds = starPathBounds,
+        scaleFactor = 3f,
+        rating = 4.1
+    )
 }
 
 @Preview
