@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -179,10 +179,10 @@ fun EmptyStar(starPath: Path, starPathBounds: Rect, scaleFactor: Float) {
 
 @Composable
 fun calculateStars(rating: Double): Map<String, Int> {
-    val maxStars by remember { mutableStateOf(5) }
-    var filledStars by remember { mutableStateOf(0) }
-    var halfStars by remember { mutableStateOf(0) }
-    var emptyStars by remember { mutableStateOf(0) }
+    val maxStars by remember { mutableIntStateOf(5) }
+    var filledStars by remember { mutableIntStateOf(0) }
+    var halfStars by remember { mutableIntStateOf(0) }
+    var emptyStars by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(key1 = rating) {
         val (firstNumber, lastNumber) = rating.toString()

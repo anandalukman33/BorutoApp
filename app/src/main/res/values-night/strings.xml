@@ -18,5 +18,9 @@
     <string name="family">Family</string>
     <string name="abilities">Abilities</string>
     <string name="nature_types">Nature Types</string>
+    <string name="corner_radius_animated">Corner Radius Animated</string>
+    <string name="faded_animation_config">Faded Animation Config</string>
+    <string name="shimmer_effect_alpha_config">Shimmer Effect Alpha Config</string>
+    <string name="remember_infinite_transition">remember infinite transition</string>
 
 </resources>

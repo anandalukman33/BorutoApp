@@ -25,7 +25,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.borutoapp.R
 import com.example.borutoapp.ui.theme.ABOUT_PLACEHOLDER_HEIGHT
 import com.example.borutoapp.ui.theme.EXTRA_SMALL_PADDING
 import com.example.borutoapp.ui.theme.HERO_ITEM_HEIGHT
@@ -52,7 +54,7 @@ fun ShimmerEffect() {
 
 @Composable
 fun AnimatedShimmerItem() {
-    val transition = rememberInfiniteTransition()
+    val transition = rememberInfiniteTransition(label = stringResource(R.string.remember_infinite_transition))
     val alphaAnim by transition.animateFloat(
         initialValue = 1f,
         targetValue = 0f,
@@ -62,7 +64,7 @@ fun AnimatedShimmerItem() {
                 easing = FastOutLinearInEasing
             ),
             repeatMode = RepeatMode.Reverse
-        )
+        ), label = stringResource(R.string.shimmer_effect_alpha_config)
     )
     ShimmerItem(alpha = alphaAnim)
 }

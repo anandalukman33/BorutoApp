@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +40,7 @@ import com.example.borutoapp.R
 import com.example.borutoapp.ui.theme.Purple500
 import com.example.borutoapp.ui.theme.TOP_APP_BAR_HEIGHT
 import com.example.borutoapp.ui.theme.topAppBarContentColor
+import com.example.borutoapp.util.TestConstants
 
 @Composable
 fun SearchTopBar(
@@ -46,7 +49,6 @@ fun SearchTopBar(
     onSearchClicked: (String) -> Unit,
     onCloseClicked: () -> Unit
 ) {
-
 
     SearchWidget(
         text = text,
@@ -70,20 +72,21 @@ fun SearchWidget(
         animationSpec = tween(
             durationMillis = 1000,
 
-            )
+            ), label = stringResource(R.string.faded_icon_animation_when_changed)
     )
-
-
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(TOP_APP_BAR_HEIGHT),
+            .height(TOP_APP_BAR_HEIGHT)
+            .semantics { contentDescription = TestConstants.SEARCH_WIDGET },
         elevation = AppBarDefaults.TopAppBarElevation,
         color = if (isSystemInDarkTheme()) Color.Black else Purple500 //MaterialTheme.colors.topAppBarBackgroundColor
     ) {
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = TestConstants.TEXT_FIELD },
             value = text,
             onValueChange = { onTextChange(it) },
             placeholder = {
@@ -102,6 +105,7 @@ fun SearchWidget(
                 if (text.isNotEmpty()) {
                     IconButton(
                         modifier = Modifier
+                            .semantics { contentDescription = TestConstants.LEADING_ICON_SEARCH }
                             .alpha(ContentAlpha.medium),
                         onClick = {}
                     ) {
@@ -114,6 +118,7 @@ fun SearchWidget(
                 } else {
                     IconButton(
                         modifier = Modifier
+                            .semantics { contentDescription = TestConstants.LEADING_ICON_BACK }
                             .alpha(ContentAlpha.medium),
                         onClick = { onCloseClicked() }
                     ) {
@@ -124,7 +129,6 @@ fun SearchWidget(
                         )
                     }
                 }
-
             },
             trailingIcon = {
                 if (text.isNotEmpty()) {
@@ -134,7 +138,9 @@ fun SearchWidget(
                     }
 
                     IconButton(
-                        modifier = Modifier.alpha(alphaAnim),
+                        modifier = Modifier
+                            .alpha(alphaAnim)
+                            .semantics { contentDescription = TestConstants.TRAILING_ICON_BUTTON_CLOSE },
                         onClick = {
                             if (text.isNotEmpty()) {
                                 onTextChange("")

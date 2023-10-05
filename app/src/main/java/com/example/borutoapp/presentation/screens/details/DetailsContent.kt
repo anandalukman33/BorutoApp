@@ -102,7 +102,7 @@ fun DetailsContent(
             EXTRA_LARGE_PADDING
         } else {
             EXPANDED_RADIUS_LEVEL
-        }
+        }, label = stringResource(R.string.corner_radius_animated)
     )
 
     BottomSheetScaffold(
